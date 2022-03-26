@@ -12,3 +12,7 @@ class IdeapocketItem(scrapy.Item):
     year = scrapy.Field()
     date = scrapy.Field()
     cover = scrapy.Field()
+    code = scrapy.Field()
+    previews_pics = scrapy.Field()
+    previews_video = scrapy.Field()
+    actress = scrapy.Field()

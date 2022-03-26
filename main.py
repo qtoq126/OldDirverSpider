@@ -21,14 +21,16 @@ if __name__ == '__main__':
 
     # Press the green button in the gutter to run the script.
     if __name__ == '__main__':
-        url = 'https://ideapocket.com/works/list/date/2022-04-12'
+        url = 'https://ideapocket.com/works/detail/IPX841'
         page = requests.get(url=url, headers=headers, proxies=proxies).text
         tree = etree.HTML(page)
-        li_list = tree.xpath('.//div[@class="swiper-slide c-low--6"]/div')
-        for li in li_list :
-            cover = li.xpath('.//img[@class="c-main-bg lazyload"]/@data-src')
-            video_url = li.xpath('.//a[@class="img hover"]/@href')
-            print(cover)
-            print(video_url)
+        li_list = tree.xpath('.//div[@class="video"]/video/@src')
+        print(li_list)
+        # for li in li_list :
+        #     cover = li.xpath('.//img[@class="c-main-bg lazyload"]/@data-src')[0]
+        #     video_url = li.xpath('.//a[@class="img hover"]/@href')[0]
+        #     number = video_url.split('/')[-1]
+        #     print(video_url)
+        #     print(number)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

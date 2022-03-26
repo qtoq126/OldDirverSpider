@@ -22,8 +22,8 @@ class IpSpider(scrapy.Spider):
                 date_detail_url = each_url.xpath('./@href').extract_first()
                 if date_detail_url is not None:
                     yield scrapy.Request(
-                        url=item['date_detail_url'],
-                        callback=self.date_url_pare,
+                        url=date_detail_url,
+                        callback=self.date_url_parse,
                         meta={'item':deepcopy(item)}
                     )
 
@@ -34,8 +34,31 @@ class IpSpider(scrapy.Spider):
         item = response.meta['item']
         video_list = response.xpath('.//div[@class="swiper-slide c-low--6"]/div')
         for video in video_list:
-            item['cover'] = video.xpath('.//img[@class="c-main-bg lazyload"]/@data-src')
-            video_url = video.xpath('.//a[@class="img hover"]/@href')
+            item['cover'] = video.xpath('.//img[@class="c-main-bg lazyload"]/@data-src').extract_first()
+            video_url = video.xpath('.//a[@class="img hover"]/@href').extract_first()
+            item['code'] = video_url.split('/')[-1]
+            item['actress'] = video.xpath('.//a[@class="name c-main-font-hover"]/text()').extract_first()
+
+            if video_url is not None:
+                yield scrapy.Request(
+                    url=video_url,
+                    callback=self.video_detail_parse,
+                    meta={'item': deepcopy(item)}
+                )
+
+    def video_detail_parse(self, response):
+        item = response.meta['item']
+        div_list = response.xpath('.//div[@class="swiper-wrapper"]/div')
+        previews = set()
+        for li in div_list:
+            previews.add(li.xpath('./img/@data-src').extract_first())
+        item['previews_pics'] = previews # 字符串url集合，预览图
+        item['previews_video'] = response.xpath('.//div[@class="video"]/video/@src').extract_first()
+        yield item
+
+
+
+
 
 
 
