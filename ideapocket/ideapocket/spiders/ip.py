@@ -1,6 +1,6 @@
 from copy import deepcopy
 import scrapy
-from ideapocket.items import IdeapocketItem
+from ideapocket.items import WorkItem, ActressItem
 from redis import Redis
 
 class IpSpider(scrapy.Spider):
@@ -12,7 +12,7 @@ class IpSpider(scrapy.Spider):
     def parse(self, response):
         li_list = response.xpath('//ul[@class="p-accordion"]/li')
         for li in li_list:
-            item = IdeapocketItem()
+            item = WorkItem()
             item['producer'] = 'IdeaPocket'
             item['year'] = li.xpath('.//h2[@class="year c-main-font"]/text()').extract_first()
             url_list = li.xpath('.//div[@class="genre -s"]/a')
@@ -34,10 +34,20 @@ class IpSpider(scrapy.Spider):
         item = response.meta['item']
         video_list = response.xpath('.//div[@class="swiper-slide c-low--6"]/div')
         for video in video_list:
+            actress_item = ActressItem(name=None, birthday=None, bwh=None, birthplace=None, hobby=None, specialty=None)
             item['cover'] = video.xpath('.//img[@class="c-main-bg lazyload"]/@data-src').extract_first()
             video_url = video.xpath('.//a[@class="img hover"]/@href').extract_first()
             item['code'] = video_url.split('/')[-1]
             item['actress'] = video.xpath('.//a[@class="name c-main-font-hover"]/text()').extract_first()
+            actress_item['name'] = item['actress']
+            actress_info_url = video.xpath('.//a[@class="name c-main-font-hover"]/@href').extract_first()
+            if actress_info_url is not None:
+                yield scrapy.Request(
+                    url=actress_info_url,
+                    callback=self.actress_detail_pare,
+                    meta={'item': actress_item}
+                )
+
             if video_url is not None:
                 yield scrapy.Request(
                     url=video_url,
@@ -56,6 +66,27 @@ class IpSpider(scrapy.Spider):
         # item['pre_video'] = pre_video if pre_video is not None else ""
         item['pre_video'] = pre_video
         yield item
+
+    def actress_detail_pare(self, response):
+        actress_item = response.meta['item']
+        info_list = response.xpath('.//div[@class="table"]/div')
+        for info in info_list:
+            cate = info.xpath('.//p[@class="th"]/text()').extract_first()
+            if cate is not None:
+                res = info.xpath('.//p[@class="td"]/text()').extract_first()
+                if cate == '誕生日':
+                    actress_item['birthday'] = res.split()[0]
+                elif cate == '身長':
+                    actress_item['height'] = res
+                elif cate == '3サイズ':
+                    actress_item['bwh'] = res
+                elif cate == '出身地':
+                    actress_item['birthplace'] = res
+                elif cate == '趣味':
+                    actress_item['hobby'] = res
+                elif cate == '特技':
+                    actress_item['specialty'] = res
+        yield actress_item
 
 
 

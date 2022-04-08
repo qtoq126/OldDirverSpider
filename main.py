@@ -22,11 +22,19 @@ if __name__ == '__main__':
 
     # Press the green button in the gutter to run the script.
     if __name__ == '__main__':
-        url = 'https://ideapocket.com/works/detail/IPX841'
+        url = 'https://ideapocket.com/actress/detail/72858'
         page = requests.get(url=url, headers=headers, proxies=proxies).text
         tree = etree.HTML(page)
-        # li_list = tree.xpath('.//div[@class="video"]/video/@src')
-        # print(li_list)
+        li_list = tree.xpath('.//div[@class="table"]/div')
+        for info in li_list:
+            cate = info.xpath('.//p[@class="th"]/text()')[0]
+            res = info.xpath('.//p[@class="td"]/text()')[0].split()[0]
+            if cate == '誕生日':
+                print(res)
+            elif cate == '身長':
+                print(res)
+            else:
+                break
 
 
         # div_list = tree.xpath('.//div[@class="swiper-wrapper"]/div')
@@ -44,8 +52,8 @@ if __name__ == '__main__':
         #     print(video_url)
         #     print(number)
 
-        connect = None
-        connect = pymysql.Connect(host='127.0.0.1', port=3306, user='root', password='5201314yes', db='old_driver')
-        print(connect)
+        # connect = None
+        # connect = pymysql.Connect(host='127.0.0.1', port=3306, user='root', password='5201314yes', db='old_driver')
+        # print(connect)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

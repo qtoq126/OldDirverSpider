@@ -10,6 +10,7 @@ import threading
 from itemadapter import ItemAdapter
 import pymysql
 
+from ideapocket.items import WorkItem, ActressItem
 from ideapocket.settings import MYSQL_HOST, MYSQL_USER, MYSQL_PWD
 
 
@@ -24,8 +25,15 @@ class MySqlPipeLine(object):
         self.cursor = self.connect.cursor()
 
     def process_item(self, item, spider):
-        sql = 'INSERT INTO old_driver.works VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)'
-        data = (0, item['code'], item['producer'], item['actress'], item['year'], item['date'], item['pre_pics'], item['pre_video'], item['cover'])
+        sql = ''
+        data = None
+        if isinstance(item, WorkItem):
+            sql = 'INSERT INTO old_driver.works VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)'
+            data = (0, item['code'], item['producer'], item['actress'], item['year'], item['date'], item['pre_pics'],
+                    item['pre_video'], item['cover'])
+        elif isinstance(item, ActressItem):
+            sql = 'INSERT IGNORE INTO old_driver.actress VALUES (%s,%s,%s,%s,%s,%s,%s,%s)'
+            data = (0, item['name'], item['birthday'], item['height'], item['bwh'], item['birthplace'], item['hobby'], item['specialty'])
         try:
             self.cursor.execute(sql, data)
             self.connect.commit()

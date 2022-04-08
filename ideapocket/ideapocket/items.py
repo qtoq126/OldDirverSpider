@@ -5,8 +5,7 @@
 
 import scrapy
 
-
-class IdeapocketItem(scrapy.Item):
+class WorkItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     code = scrapy.Field()
@@ -17,3 +16,12 @@ class IdeapocketItem(scrapy.Item):
     cover = scrapy.Field()
     pre_pics = scrapy.Field()
     pre_video = scrapy.Field()
+
+class ActressItem(scrapy.Item):
+    name = scrapy.Field()
+    birthday = scrapy.Field()
+    height = scrapy.Field()
+    bwh = scrapy.Field()
+    birthplace = scrapy.Field()
+    hobby = scrapy.Field()
+    specialty = scrapy.Field()
