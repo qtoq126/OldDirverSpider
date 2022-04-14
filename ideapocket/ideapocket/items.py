@@ -19,9 +19,11 @@ class WorkItem(scrapy.Item):
 
 class ActressItem(scrapy.Item):
     name = scrapy.Field()
+    avatar = scrapy.Field()
     birthday = scrapy.Field()
     height = scrapy.Field()
     bwh = scrapy.Field()
     birthplace = scrapy.Field()
     hobby = scrapy.Field()
     specialty = scrapy.Field()
+    producer = scrapy.Field()

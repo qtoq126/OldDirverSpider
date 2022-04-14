@@ -29,11 +29,10 @@ class MySqlPipeLine(object):
         data = None
         if isinstance(item, WorkItem):
             sql = 'INSERT INTO old_driver.works VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)'
-            data = (0, item['code'], item['producer'], item['actress'], item['year'], item['date'], item['pre_pics'],
-                    item['pre_video'], item['cover'])
+            data = (0, item['code'], item['producer'], item['actress'], item['year'], item['date'], item['pre_pics'], item['pre_video'], item['cover'])
         elif isinstance(item, ActressItem):
-            sql = 'INSERT IGNORE INTO old_driver.actress VALUES (%s,%s,%s,%s,%s,%s,%s,%s)'
-            data = (0, item['name'], item['birthday'], item['height'], item['bwh'], item['birthplace'], item['hobby'], item['specialty'])
+            sql = 'INSERT IGNORE INTO old_driver.actress VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
+            data = (0, item['name'], item['avatar'], item['height'], item['bwh'], item['birthday'], item['hobby'], item['specialty'], item['birthplace'], item['producer'])
         try:
             self.cursor.execute(sql, data)
             self.connect.commit()

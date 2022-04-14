@@ -34,12 +34,11 @@ class IpSpider(scrapy.Spider):
         item = response.meta['item']
         video_list = response.xpath('.//div[@class="swiper-slide c-low--6"]/div')
         for video in video_list:
-            actress_item = ActressItem(name=None, birthday=None, bwh=None, birthplace=None, hobby=None, specialty=None)
+            actress_item = ActressItem(name=None, avatar=None, height=None, bwh=None, birthday=None, hobby=None, specialty=None, birthplace=None, producer='IdeaPocket')
             item['cover'] = video.xpath('.//img[@class="c-main-bg lazyload"]/@data-src').extract_first()
             video_url = video.xpath('.//a[@class="img hover"]/@href').extract_first()
             item['code'] = video_url.split('/')[-1]
-            item['actress'] = video.xpath('.//a[@class="name c-main-font-hover"]/text()').extract_first()
-            actress_item['name'] = item['actress']
+            actress_item['name'] = video.xpath('.//a[@class="name c-main-font-hover"]/text()').extract_first()
             actress_info_url = video.xpath('.//a[@class="name c-main-font-hover"]/@href').extract_first()
             if actress_info_url is not None:
                 yield scrapy.Request(
@@ -65,10 +64,16 @@ class IpSpider(scrapy.Spider):
         pre_video = response.xpath('.//div[@class="video"]/video/@src').extract_first()
         # item['pre_video'] = pre_video if pre_video is not None else ""
         item['pre_video'] = pre_video
+        actress = set()
+        actress_div = response.xpath('.//div[@class="p-workPage__table"]/div[1]/div[@class="td"]/div')
+        for a in actress_div:
+            actress.add(a.xpath('.//a/text()').extract_first())
+        item['actress'] = ','.join(actress)
         yield item
 
     def actress_detail_pare(self, response):
         actress_item = response.meta['item']
+        actress_item['avatar'] = response.xpath('.//div[@class="swiper-slide"]/img/@data-src').extract_first()
         info_list = response.xpath('.//div[@class="table"]/div')
         for info in info_list:
             cate = info.xpath('.//p[@class="th"]/text()').extract_first()
@@ -79,7 +84,7 @@ class IpSpider(scrapy.Spider):
                 elif cate == '身長':
                     actress_item['height'] = res
                 elif cate == '3サイズ':
-                    actress_item['bwh'] = res
+                    actress_item['bwh'] = res.replace('cm (-) ', '/').replace('cm ', '/').replace('cm', '').replace('B','').replace('W', '').replace('H', '')
                 elif cate == '出身地':
                     actress_item['birthplace'] = res
                 elif cate == '趣味':

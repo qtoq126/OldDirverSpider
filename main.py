@@ -22,19 +22,26 @@ if __name__ == '__main__':
 
     # Press the green button in the gutter to run the script.
     if __name__ == '__main__':
-        url = 'https://ideapocket.com/actress/detail/72858'
-        page = requests.get(url=url, headers=headers, proxies=proxies).text
-        tree = etree.HTML(page)
-        li_list = tree.xpath('.//div[@class="table"]/div')
-        for info in li_list:
-            cate = info.xpath('.//p[@class="th"]/text()')[0]
-            res = info.xpath('.//p[@class="td"]/text()')[0].split()[0]
-            if cate == '誕生日':
-                print(res)
-            elif cate == '身長':
-                print(res)
-            else:
-                break
+        bwh = 'B82cm (-) W59cm H81cm'
+        new_str = bwh.replace('cm (-) ', '/').replace('cm ', '/').replace('cm', '').replace('B','').replace('W', '').replace('H', '')
+        print(bwh)
+        print(new_str)
+        # url = 'https://ideapocket.com/works/detail/IPX850?page_from=actress&sys_code=31460'
+        # page = requests.get(url=url, headers=headers, proxies=proxies).text
+        # tree = etree.HTML(page)
+        # avatar = tree.xpath('.//div[@class="p-workPage__table"]/div[1]/div[@class="td"]/div')
+        # for a in avatar:
+        #     print(a.xpath('.//a/text()'))
+        # li_list = tree.xpath('.//div[@class="table"]/div')
+        # for info in li_list:
+        #     cate = info.xpath('.//p[@class="th"]/text()')[0]
+        #     res = info.xpath('.//p[@class="td"]/text()')[0].split()[0]
+        #     if cate == '誕生日':
+        #         print(res)
+        #     elif cate == '身長':
+        #         print(res)
+        #     else:
+        #         break
 
 
         # div_list = tree.xpath('.//div[@class="swiper-wrapper"]/div')
